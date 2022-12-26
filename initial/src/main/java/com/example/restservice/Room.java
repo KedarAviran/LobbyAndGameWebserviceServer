@@ -13,6 +13,8 @@ public class Room
         this.roomID=roomID;
         this.player1=player1;
         this.gameType=gameType;
+        if(gameType.equals("Chess"))
+            game=new ChessGame();
     }
     public boolean setMove(String move)
     {
@@ -24,15 +26,11 @@ public class Room
     }
     public boolean isFull()
     {
-        if(player2!=null)
-            return true;
-        return false;
+        return player2!=null;
     }
     public boolean isEmpty()
     {
-        if(player2==null && player1==null)
-            return true;
-        return false;
+        return player2==null && player1==null;
     }
     public void playerLeave(String player)
     {

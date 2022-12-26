@@ -3,8 +3,6 @@ package com.example.restservice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.lang.model.type.PrimitiveType;
 import java.util.*;
 
 @RestController
@@ -15,9 +13,9 @@ public class Lobby
 
     public Room getRoomByID(int roomID)
     {
-        for(int i=0;i<rooms.size();i++)
-            if(rooms.get(i).getRoomID()==roomID)
-                return rooms.get(i);
+        for (Room room : rooms)
+            if (room.getRoomID() == roomID)
+                return room;
         return null;
     }
 
