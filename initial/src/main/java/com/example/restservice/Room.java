@@ -13,8 +13,8 @@ public class Room
         this.roomID=roomID;
         this.player1=player1;
         this.gameType=gameType;
-        if(gameType.equals("Chess"))
-            game=new ChessGame();
+        if(gameType.equals("Checkers"))
+            game=new CheckersGame();
     }
     public boolean setMove(String move)
     {

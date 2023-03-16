@@ -8,7 +8,7 @@ import java.util.*;
 @RestController
 public class Lobby
 {
-    List<Room> rooms= new ArrayList<Room>();
+    List<Room> rooms= new ArrayList<>();
     int roomIDCounter=0;
 
     public Room getRoomByID(int roomID)
