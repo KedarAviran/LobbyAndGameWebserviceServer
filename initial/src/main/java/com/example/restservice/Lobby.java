@@ -10,7 +10,6 @@ public class Lobby
 {
     List<Room> rooms= new ArrayList<>();
     int roomIDCounter=0;
-
     public Room getRoomByID(int roomID)
     {
         for (Room room : rooms)
@@ -20,17 +19,20 @@ public class Lobby
     }
 
     @GetMapping("/getRooms")
-    public List<Room> getRooms()
+    public StringBuilder getRooms()
     {
-        return rooms;
+        StringBuilder roomsString= new StringBuilder();
+        for (Room rm: rooms)
+            roomsString.append(rm.toString()).append(" ");
+        return roomsString;
     }
     @GetMapping("/createRoom")
-    public void createRoom(@RequestParam(value = "gameType") String gameType , @RequestParam(value = "playerName") String name)
+    public void createRoom(@RequestParam(value = "gameType" , defaultValue = "Chess") String gameType , @RequestParam(value = "playerName" , defaultValue = "admin") String name)
     {
         rooms.add(new Room(roomIDCounter,name,gameType));
     }
     @GetMapping("/joinRoom")
-    public boolean joinRoom(@RequestParam(value = "roomID") int roomID , @RequestParam(value = "playerName") String name)
+    public boolean joinRoom(@RequestParam(value = "roomID" , required = true) int roomID , @RequestParam(value = "playerName" , required = true) String name)
     {
         Room rm= getRoomByID(roomID);
         if(rm.isFull())
@@ -49,11 +51,12 @@ public class Lobby
     @GetMapping("/setMove")
     public boolean setMove(@RequestParam(value = "roomID") int roomID , @RequestParam(value = "move") String move)
     {
-        return getRoomByID(roomID).setMove(move);
+        return getRoomByID(roomID).setMove(move);   
     }
     @GetMapping("/getLastMove")
     public String getLastMove(@RequestParam(value = "roomID") int roomID)
     {
         return getRoomByID(roomID).getLastMove();
     }
+
 }

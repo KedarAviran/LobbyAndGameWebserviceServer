@@ -63,4 +63,8 @@ public class Room
     {
         return gameType;
     }
+    public String toString()
+    {
+        return roomID+","+player1+","+player2+","+gameType+"";
+    }
 }
