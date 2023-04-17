@@ -49,9 +49,9 @@ public class Lobby
         rooms.remove(getRoomByID(roomID));
     }
     @GetMapping("/setMove")
-    public boolean setMove(@RequestParam(value = "roomID") int roomID , @RequestParam(value = "move") String move)
+    public void setMove(@RequestParam(value = "roomID") int roomID , @RequestParam(value = "move") String move)
     {
-        return getRoomByID(roomID).setMove(move);   
+        getRoomByID(roomID).setMove(move);
     }
     @GetMapping("/getLastMove")
     public String getLastMove(@RequestParam(value = "roomID") int roomID)

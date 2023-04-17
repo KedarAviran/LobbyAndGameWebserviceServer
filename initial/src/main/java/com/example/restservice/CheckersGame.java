@@ -33,15 +33,15 @@ public class CheckersGame extends Game
             for(int j=0;j<board.length;j++)
             {
                 board[i][j] = new piece(State.empty,false) ;
-                if(i<3 && (j+i)%2==0)
+                if(i<3 && (j+i)%2==1)
                     board[i][j] = new piece(State.white,false);
-                if(i>4 && (j+i)%2==0)
+                if(i>4 && (j+i)%2==1)
                     board[i][j] = new piece(State.black,false);
             }
     }
     private boolean isLegalMove(int fromX ,int fromY ,int toX,int toY)
     {
-        if((fromX+fromY)%2==1|| (toX+toY)%2==1 || toX==fromX)
+        if((fromX+fromY)%2==0|| (toX+toY)%2==0 || toX==fromX)
             return false;
         if(fromX<0 || fromX>7 ||fromY<0 || fromY>7 ||toX<0 || toX>7 ||toY<0 || toY>7)
             return false;
@@ -77,10 +77,10 @@ public class CheckersGame extends Game
     @Override
     public boolean setMove(String move)
     {
-        int fromX = move.charAt(0);
-        int fromY = move.charAt(1);
-        int toX = move.charAt(2);
-        int toY = move.charAt(3);
+        int fromY = Integer.parseInt(move.charAt(0)+"");
+        int fromX = Integer.parseInt(move.charAt(1)+"");
+        int toY = Integer.parseInt(move.charAt(2)+"");
+        int toX = Integer.parseInt(move.charAt(3)+"");
         if((turn && board[fromX][fromY].state != State.white) || (!turn && board[fromX][fromY].state != State.black))
             return false;
         if(!isLegalMove(fromX,fromY,toX,toY))
