@@ -3,6 +3,8 @@ package com.example.restservice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.sql.*;
 import java.util.*;
 
 @RestController
@@ -27,9 +29,11 @@ public class Lobby
         return roomsString;
     }
     @GetMapping("/createRoom")
-    public void createRoom(@RequestParam(value = "gameType" , defaultValue = "Chess") String gameType , @RequestParam(value = "playerName" , defaultValue = "admin") String name)
+    public String createRoom(@RequestParam(value = "gameType" , defaultValue = "Chess") String gameType , @RequestParam(value = "playerName" , defaultValue = "admin") String name)
     {
         rooms.add(new Room(roomIDCounter,name,gameType));
+        roomIDCounter++;
+        return (roomIDCounter-1) + "";
     }
     @GetMapping("/joinRoom")
     public boolean joinRoom(@RequestParam(value = "roomID" , required = true) int roomID , @RequestParam(value = "playerName" , required = true) String name)
@@ -57,6 +61,45 @@ public class Lobby
     public String getLastMove(@RequestParam(value = "roomID") int roomID)
     {
         return getRoomByID(roomID).getLastMove();
+    }
+    @GetMapping("/isPlayerLeft")
+    public String isPlayerLeft(@RequestParam(value = "roomID") int roomID)
+    {
+        return getRoomByID(roomID).getPlayerLeft();
+    }
+    @GetMapping("/getGameHistory")
+    public String getGameHistory()
+    {
+        String path = System.getProperty("user.dir");
+        try{Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");} catch (Exception ex) {
+            ex.printStackTrace(); }
+        String databaseURL = "jdbc:ucanaccess://C:/Users/Aviran/Documents/GitHub/FinalProjectJava/MyDataBase.accdb";
+        StringBuilder games = new StringBuilder();
+        try (Connection connection = DriverManager.getConnection(databaseURL)) {
+            //String sql = "INSERT INTO Contacts (Full_Name, Email, Phone) VALUES (?, ?, ?)";
+            //PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            //preparedStatement.setString(1, "Jim Rohn");
+            //preparedStatement.setString(2, "rohnj@herbalife.com");
+            //preparedStatement.setString(3, "0919989998");
+            //int row = preparedStatement.executeUpdate();
+            //if (row > 0) {
+            //    System.out.println("A row has been inserted successfully.");
+            //}
+            String sql = "SELECT * FROM GameHistory";
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery(sql);
+
+            while (result.next()) {
+                int id = result.getInt("ID");
+                String GameText = result.getString("GameText");
+                String Winner = result.getString("Winner");
+                String Time = result.getString("Time");
+                games.append(id).append(",").append(GameText).append(",").append(Winner).append(",").append(Time).append(" ");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return games.toString();
     }
 
 }

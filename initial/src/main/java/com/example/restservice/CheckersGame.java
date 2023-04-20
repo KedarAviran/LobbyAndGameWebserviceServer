@@ -34,9 +34,9 @@ public class CheckersGame extends Game
             {
                 board[i][j] = new piece(State.empty,false) ;
                 if(i<3 && (j+i)%2==1)
-                    board[i][j] = new piece(State.white,false);
-                if(i>4 && (j+i)%2==1)
                     board[i][j] = new piece(State.black,false);
+                if(i>4 && (j+i)%2==1)
+                    board[i][j] = new piece(State.white,false);
             }
     }
     private boolean isLegalMove(int fromX ,int fromY ,int toX,int toY)
@@ -45,16 +45,16 @@ public class CheckersGame extends Game
             return false;
         if(fromX<0 || fromX>7 ||fromY<0 || fromY>7 ||toX<0 || toX>7 ||toY<0 || toY>7)
             return false;
-        if(board[fromX][fromY].state == State.empty || board[toX][toY].state != State.empty)
+        if(board[fromY][fromX].state == State.empty || board[toY][toX].state != State.empty)
             return false;
         if(Math.abs(fromX-toX) != Math.abs(fromY-toY) || Math.abs(fromX-toX) >2)
             return false;
-        if(Math.abs(fromX-toX) == 1 && board[fromX][fromY].isKing)
+        if(Math.abs(fromX-toX) == 1 && board[fromY][fromX].isKing)
             return true;
-        int dirY = fromY-toY / Math.abs(fromY-toY); // 1 is up -1 is down
-        if(board[fromX][fromY].state == State.black && dirY == 1 && !board[fromX][fromY].isKing)
+        int dirY = (fromY-toY) / Math.abs(fromY-toY); // 1 is up -1 is down
+        if(board[fromY][fromX].state == State.black && dirY == 1 && !board[fromY][fromX].isKing)
             return false;
-        if(board[fromX][fromY].state == State.white && dirY == -1 && !board[fromX][fromY].isKing)
+        if(board[fromY][fromX].state == State.white && dirY == -1 && !board[fromY][fromX].isKing)
             return false;
 
         if(Math.abs(fromX-toX) == 1)
@@ -62,7 +62,7 @@ public class CheckersGame extends Game
 
         int midX = (toX + fromX) /2;
         int midY = (toY + fromY) /2;
-        if(board[midX][midY].state == State.empty || board[midX][midY].state == board[fromX][fromY].state)
+        if(board[midY][midX].state == State.empty || board[midY][midX].state == board[fromY][fromX].state)
             return false;
 
         return true;
@@ -81,7 +81,7 @@ public class CheckersGame extends Game
         int fromX = Integer.parseInt(move.charAt(1)+"");
         int toY = Integer.parseInt(move.charAt(2)+"");
         int toX = Integer.parseInt(move.charAt(3)+"");
-        if((turn && board[fromX][fromY].state != State.white) || (!turn && board[fromX][fromY].state != State.black))
+        if((turn && board[fromY][fromX].state != State.white) || (!turn && board[fromY][fromX].state != State.black))
             return false;
         if(!isLegalMove(fromX,fromY,toX,toY))
             return false;
@@ -90,7 +90,9 @@ public class CheckersGame extends Game
         int midX = (toX + fromX) /2;
         int midY = (toY + fromY) /2;
         if(Math.abs(fromX-toX) == 2)
-            board[midX][midY].state = State.empty;
+            board[midY][midX].state = State.empty;
+        board[toY][toX].state = board[fromY][fromX].state;
+        board[fromY][fromX].state = State.empty;
         return true;
     }
 }

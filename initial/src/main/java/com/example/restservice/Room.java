@@ -7,7 +7,7 @@ public class Room
     private String player2;
     private String gameType;
     private Game game;
-
+    private String playerLeft;
     public Room(int roomID,String player1,String gameType)
     {
         this.roomID=roomID;
@@ -34,8 +34,11 @@ public class Room
     }
     public void playerLeave(String player)
     {
+        playerLeft = player;
+        if(player1!=null)
         if(player1.equals(player))
             setPlayer1(null);
+        if(player2!=null)
         if(player2.equals(player))
             setPlayer2(null);
     }
@@ -62,6 +65,10 @@ public class Room
     public String getGameType()
     {
         return gameType;
+    }
+    public String getPlayerLeft()
+    {
+        return playerLeft;
     }
     public String toString()
     {
