@@ -33,7 +33,10 @@ public class CheckersGame extends Game
         turn = true;
         setupBoard();
     }
-
+    public boolean getTurn()
+    {
+        return turn;
+    }
     private void setupBoard()
     {
         for (int i = 0; i < board.length; i++)
@@ -87,7 +90,10 @@ public class CheckersGame extends Game
             return "true";
         return lastMove;
     }
-
+    public String getMoveHistory()
+    {
+        return moveHistory;
+    }
     @Override
     public boolean setMove(String move)
     {
@@ -99,6 +105,7 @@ public class CheckersGame extends Game
             return false;
         if (!isLegalMove(fromX, fromY, toX, toY))
             return false;
+        moveHistory=moveHistory+","+move;
         turn = !turn;
         lastMove = move;
         int midX = (toX + fromX) / 2;

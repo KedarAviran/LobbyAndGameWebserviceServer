@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.*;
 
 @RestController
@@ -47,6 +48,12 @@ public class Lobby
         rm.setPlayer2(name);
         return true;
     }
+    @GetMapping("/isFull")
+    public boolean isFull(@RequestParam(value = "roomID", required = true) int roomID)
+    {
+        Room rm = getRoomByID(roomID);
+        return rm.isFull();
+    }
 
     @GetMapping("/leaveRoom")
     public void leaveRoom(@RequestParam(value = "roomID") int roomID, @RequestParam(value = "playerName") String name)
@@ -60,7 +67,10 @@ public class Lobby
     @GetMapping("/setMove")
     public String setMove(@RequestParam(value = "roomID") int roomID, @RequestParam(value = "move") String move)
     {
+
         getRoomByID(roomID).setMove(move);
+        if(getRoomByID(roomID).isGameOver())
+            addGameToHistory(roomID,getRoomByID(roomID).getWinner());
         return String.valueOf(getRoomByID(roomID).isGameOver());
     }
 
@@ -75,7 +85,37 @@ public class Lobby
     {
         return getRoomByID(roomID).getPlayerLeft();
     }
+    private void addGameToHistory(int roomID,String winner)
+    {
+        Room rm = getRoomByID(roomID);
+        String moves = rm.getGameHistory();
+        String gameText = rm.getPlayer1()+"VS"+rm.getPlayer2();
+        String date = LocalDate.now().toString();
 
+        String path = System.getProperty("user.dir");
+        try {Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");} catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        String databaseURL = "jdbc:ucanaccess://C:/Users/Aviran/Documents/GitHub/FinalProjectJava/MyDataBase.accdb";
+        try (Connection connection = DriverManager.getConnection(databaseURL))
+        {
+            String sql = "INSERT INTO GameHistory (GameText, Winner, Time, Moves) VALUES (?, ?, ?, ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, gameText);
+            preparedStatement.setString(2, winner);
+            preparedStatement.setString(3, date);
+            preparedStatement.setString(4, moves);
+            int row = preparedStatement.executeUpdate();
+            if (row > 0) {
+                System.out.println("A row has been inserted successfully.");
+            }
+
+        } catch (SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+    }
     @GetMapping("/getGameHistory")
     public String getGameHistory(@RequestParam(value = "roomID", required = false, defaultValue = "-1") int roomID)
     {
@@ -89,21 +129,11 @@ public class Lobby
         StringBuilder games = new StringBuilder();
         try (Connection connection = DriverManager.getConnection(databaseURL))
         {
-            //String sql = "INSERT INTO Contacts (Full_Name, Email, Phone) VALUES (?, ?, ?)";
-            //PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            //preparedStatement.setString(1, "Jim Rohn");
-            //preparedStatement.setString(2, "rohnj@herbalife.com");
-            //preparedStatement.setString(3, "0919989998");
-            //int row = preparedStatement.executeUpdate();
-            //if (row > 0) {
-            //    System.out.println("A row has been inserted successfully.");
-            //}
             String sql = "SELECT * FROM GameHistory";
             if (roomID != -1)
                 sql = "SELECT Moves FROM GameHistory WHERE ID = '" + roomID + "'";
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(sql);
-
             while (result.next())
             {
                 if (roomID != -1)

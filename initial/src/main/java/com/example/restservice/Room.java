@@ -8,7 +8,6 @@ public class Room
     private String gameType;
     private Game game;
     private String playerLeft;
-
     public Room(int roomID, String player1, String gameType)
     {
         this.roomID = roomID;
@@ -41,6 +40,17 @@ public class Room
     public boolean isGameOver()
     {
         return game.isGameOver();
+    }
+    public String getWinner()
+    {
+        if(game.getTurn())
+            return player2;
+        else
+            return player1;
+    }
+    public String getGameHistory()
+    {
+        return game.getMoveHistory();
     }
 
     public void playerLeave(String player)
