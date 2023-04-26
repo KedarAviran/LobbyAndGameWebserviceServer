@@ -105,7 +105,10 @@ public class CheckersGame extends Game
             return false;
         if (!isLegalMove(fromX, fromY, toX, toY))
             return false;
-        moveHistory=moveHistory+","+move;
+        if(moveHistory==null || moveHistory.equals(""))
+            moveHistory=move;
+        else
+            moveHistory=moveHistory+"."+move;
         turn = !turn;
         lastMove = move;
         int midX = (toX + fromX) / 2;
